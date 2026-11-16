@@ -37,6 +37,15 @@
     <section class="section">
       <div class="container contact-layout">
         <form class="contact-form" id="contact-form" action="/contact" method="post">
+          <div class="honeypot">
+            <label for="website">Website</label>
+            <input
+            type="text"
+            id="website"
+            name="website"
+            tabindex="-1"
+            autocomplete="off">
+          </div>
           <label for="name">Your name</label>
           <input type="text" id="name" name="name" required>
 
@@ -102,5 +111,27 @@
     </div>
   </footer>
   <script src="js/contact.js"></script>
+  <script>
+  async function initializeContactForm() {
+    try {
+      const response = await fetch('/contact-token', {
+        cache: 'no-store'
+      });
+
+      if (!response.ok) {
+        throw new Error('Could not initialize contact form');
+      }
+
+      const { timestamp, signature } = await response.json();
+
+      document.getElementById('form-timestamp').value = timestamp;
+      document.getElementById('form-signature').value = signature;
+    } catch (error) {
+      console.error('Contact form initialization failed:', error);
+    }
+  }
+
+  initializeContactForm();
+</script>
 </body>
 </html>
